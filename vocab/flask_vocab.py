@@ -60,7 +60,8 @@ def keep_going():
     """
     flask.g.vocab = WORDS.as_list()
     return flask.render_template('vocab.html')
-
+    
+    
 
 @app.route("/success")
 def success():
@@ -74,7 +75,7 @@ def success():
 #######################
 
 
-@app.route("/_check", methods=["POST"])
+@app.route("/_check")
 def check():
     """
     User has submitted the form with a word ('attempt')
@@ -94,7 +95,9 @@ def check():
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
-
+    rslt = {"Already found": text in matches,
+            "Not in the word list": not matched,
+            "Letter not in jumble": not in_jumble}
     # Respond appropriately
     if matched and in_jumble and not (text in matches):
         # Cool, they found a new word

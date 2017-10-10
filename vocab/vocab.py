@@ -36,7 +36,7 @@ class Vocab():
     def as_list(self):
         """As list of words"""
         return self.words
-
+    
     def has(self, word):
         """
         Is word present in vocabulary list?
