@@ -52,6 +52,16 @@ def index():
     return flask.render_template('vocab.html')
 
 
+
+@app.route("/_countem")
+def countem():
+    text = flask.request.args.get("text", type=str)
+    length = len(text)
+    rslt = {"long_enough": length >= 5}
+    return flask.jsonify(result=rslt)
+
+
+
 @app.route("/keep_going")
 def keep_going():
     """
@@ -85,40 +95,36 @@ def check():
     made only from the jumble letters, and not a word they
     already found.
     """
+    
     app.logger.debug("Entering check")
-
-    # The data we need, from form and from cookie
-    text = flask.request.form["attempt"]
+    text = flask.request.args.get("text", type=str)
+    print(text)
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
-
+    print("THIS IS JUMBLE")
+    print(jumble, matches)
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
     rslt = {"Already found": text in matches,
             "Not in the word list": not matched,
-            "Letter not in jumble": not in_jumble}
+            "Letter not in jumble/can\'t be made from the letters": not in_jumble}
     # Respond appropriately
     if matched and in_jumble and not (text in matches):
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
-    elif text in matches:
-        flask.flash("You already found {}".format(text))
-    elif not matched:
-        flask.flash("{} isn't in the list of words".format(text))
-    elif not in_jumble:
-        flask.flash(
-            '"{}" can\'t be made from the letters {}'.format(text, jumble))
-    else:
-        app.logger.debug("This case shouldn't happen!")
-        assert False  # Raises AssertionError
-
-    # Choose page:  Solved enough, or keep going?
-    if len(matches) >= flask.session["target_count"]:
-       return flask.redirect(flask.url_for("success"))
-    else:
-       return flask.redirect(flask.url_for("keep_going"))
+    
+        print("TARGET COUNT", flask.session["target_count"])
+        # Choose page:  Solved enough, or keep going?
+        if len(matches) >= flask.session["target_count"]:
+           #return flask.redirect(flask.url_for("success"))
+            return flask.jsonify(result=rslt)
+            #have to return json object but have it so client gets it and displays webpage
+        else:
+           #return flask.redirect(flask.url_for("keep_going"))
+            return flask.jsonify(result = text)
+    return flask.jsonify(result = "")
 
 ###############
 # AJAX request handlers
