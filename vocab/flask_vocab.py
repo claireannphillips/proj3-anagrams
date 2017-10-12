@@ -106,25 +106,21 @@ def check():
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
-    rslt = {"Already found": text in matches,
-            "Not in the word list": not matched,
-            "Letter not in jumble/can\'t be made from the letters": not in_jumble}
+    rslt = {"Already_found": text in matches,
+            "Not_in_list": not matched,
+            "Letter_not_in_jumble": not in_jumble,
+            "Word_found": matched and in_jumble and not (text in matches),
+            "Game_over": len(matches) >= flask.session["target_count"]}
     # Respond appropriately
-    if matched and in_jumble and not (text in matches):
+    if rslt["Word found"]:
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
-    
+        
         print("TARGET COUNT", flask.session["target_count"])
         # Choose page:  Solved enough, or keep going?
-        if len(matches) >= flask.session["target_count"]:
-           #return flask.redirect(flask.url_for("success"))
-            return flask.jsonify(result=rslt)
-            #have to return json object but have it so client gets it and displays webpage
-        else:
-           #return flask.redirect(flask.url_for("keep_going"))
-            return flask.jsonify(result = text)
-    return flask.jsonify(result = "")
+     
+    return flask.jsonify(result = rslt)
 
 ###############
 # AJAX request handlers

@@ -92,7 +92,7 @@
 <br />
 
 {% if session.matches|length is not equalto 0  %}
-<h2>You found </h2>
+<h2 id="You found" > </h2>
 <p id="results">
   {% for match in session.matches %}
   {{ match }} 
@@ -135,6 +135,11 @@ $("#attempt").keyup(function(event) {
               function(data) {
                 console.log("confirmed ajax request")
 		text = data.result
+		alreadyfound = data.result.Already_found
+		notinlist = data.result.Not_in_list
+		letternotinjumble = data.result.Letter_not_in_jumble
+		wordfound = data.result.Word_found
+		gameover = data.result.Game_over
 		console.log("RESULT = " + text)
                }
            );
