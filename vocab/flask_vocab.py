@@ -89,11 +89,8 @@ def check():
     
     app.logger.debug("Entering check")
     text = flask.request.args.get("text", type=str)
-    print(text)
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
-    print("THIS IS JUMBLE")
-    print(jumble, matches)
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
@@ -107,9 +104,7 @@ def check():
     if rslt["Word_found"]:
         # Cool, they found a new word
         matches.append(text)
-        flask.session["matches"] = matches
-        
-        print("TARGET COUNT", flask.session["target_count"])
+        flask.session["matches"] = matches 
         # Choose page:  Solved enough, or keep going?
      
     return flask.jsonify(result = rslt)
