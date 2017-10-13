@@ -92,7 +92,7 @@
 <br />
 
 {% if session.matches|length is not equalto 0  %}
-<h2 id="You found" > </h2>
+
 <p id="results">
   {% for match in session.matches %}
   {{ match }} 
@@ -100,6 +100,9 @@
 </p>
 {% endif %}
 
+
+
+<p id = "Youfound"> </p>
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -111,6 +114,7 @@
 {% endwith %}
 
 <script>
+$("#Youfound").append("Words you've found: ");
 // We use 'keyup' because the form value
 // is updated before that event is generated.
 // keypress is triggered before the input field has been
@@ -130,17 +134,34 @@ $("#attempt").keyup(function(event) {
    // so ignoring the shift key we get only the upper case letters.
 
    if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter)) { return }
-   console.log(txt)
+   console.log(txt);
    $.getJSON( "/_check", { text: txt }, 
               function(data) {
-                console.log("confirmed ajax request")
-		text = data.result
-		alreadyfound = data.result.Already_found
-		notinlist = data.result.Not_in_list
-		letternotinjumble = data.result.Letter_not_in_jumble
-		wordfound = data.result.Word_found
-		gameover = data.result.Game_over
-		console.log("RESULT = " + text)
+                console.log("confirmed ajax request");
+		text = data.result;
+		alreadyfound = data.result.Already_found;
+		console.log("THIS IS ALREDY FOUND " + alreadyfound);
+		notinlist = data.result.Not_in_list;
+		console.log("NOT IN LIST " + notinlist);
+		letternotinjumble = data.result.Letter_not_in_jumble;
+		console.log("NOT IN JUMBLE " + letternotinjumble);
+		wordfound = data.result.Word_found;
+		console.log("WORD NOT FOUND " + wordfound);
+		gameover = data.result.Game_over;
+		console.log("GAME OVER " + gameover);
+		currentword = data.result.currentword;
+
+		if (gameover) {
+		   window.location.replace("/success");
+		}
+		if (wordfound){
+		   console.log("WE GOT INTO THE IF STATEMENT");
+		   $("#Youfound").append(currentword + " ");
+		}
+		else{
+		//display not a right word
+		}
+		console.log("RESULT = " + text);
                }
            );
    });

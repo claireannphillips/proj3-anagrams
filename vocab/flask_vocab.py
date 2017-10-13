@@ -53,15 +53,6 @@ def index():
 
 
 
-@app.route("/_countem")
-def countem():
-    text = flask.request.args.get("text", type=str)
-    length = len(text)
-    rslt = {"long_enough": length >= 5}
-    return flask.jsonify(result=rslt)
-
-
-
 @app.route("/keep_going")
 def keep_going():
     """
@@ -110,9 +101,10 @@ def check():
             "Not_in_list": not matched,
             "Letter_not_in_jumble": not in_jumble,
             "Word_found": matched and in_jumble and not (text in matches),
-            "Game_over": len(matches) >= flask.session["target_count"]}
+            "Game_over": len(matches) >= flask.session["target_count"],
+            "currentword": text }
     # Respond appropriately
-    if rslt["Word found"]:
+    if rslt["Word_found"]:
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
